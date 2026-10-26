@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FAW Risk & Scouting Prototype — Pantnagar NWPZ</title>
+<style>
+  :root{
+    --paper:#F3F1E4;
+    --paper-deep:#EAE6D4;
+    --ink:#20301C;
+    --ink-soft:#4B5A42;
+    --field:#3E5C33;
+    --field-deep:#2A4020;
+    --amber:#B4752A;
+    --amber-soft:#E8D7B8;
+    --brick:#9C3A2E;
+    --brick-soft:#F0D9D2;
+    --olive:#6B6A4E;
+    --line:#C9C2A6;
+    --card:#FBFAF3;
+    --mono: "SFMono-Regular", Menlo, Consolas, "Liberation Mono", monospace;
+    --serif: Georgia, "Iowan Old Style", "Times New Roman", serif;
+    --sans: -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; background:var(--paper); color:var(--ink);
+    font-family:var(--sans); line-height:1.5; padding:0 0 60px 0;
+  }
+  .wrap{max-width:880px; margin:0 auto; padding:36px 24px 0 24px;}
+
+  header.hero{
+    border-bottom:2px solid var(--ink);
+    padding-bottom:20px; margin-bottom:28px;
+    display:flex; justify-content:space-between; align-items:flex-end; gap:16px; flex-wrap:wrap;
+  }
+  .tag{
+    font-family:var(--mono); font-size:11px; letter-spacing:.12em; text-transform:uppercase;
+    color:var(--field-deep); background:var(--amber-soft); padding:3px 8px; border-radius:2px;
+    border:1px solid var(--line);
+  }
+  h1{
+    font-family:var(--serif); font-size:30px; font-weight:700; margin:10px 0 4px 0; color:var(--ink);
+    letter-spacing:-.01em;
+  }
+  .subtitle{color:var(--ink-soft); font-size:14px; max-width:520px;}
+  .locale{
+    text-align:right; font-family:var(--mono); font-size:12px; color:var(--olive); line-height:1.6;
+  }
+
+  .card{
+    background:var(--card); border:1px solid var(--line); border-radius:3px;
+    padding:22px 24px; margin-bottom:20px; position:relative;
+  }
+  .card::before{
+    content: attr(data-tab);
+    position:absolute; top:-11px; left:20px; background:var(--field-deep); color:var(--paper);
+    font-family:var(--mono); font-size:10.5px; letter-spacing:.1em; text-transform:uppercase;
+    padding:3px 10px; border-radius:2px;
+  }
+  .card h2{
+    font-family:var(--serif); font-size:19px; margin:6px 0 14px 0; color:var(--field-deep);
+  }
+  .grid-inputs{
+    display:grid; grid-template-columns:repeat(auto-fit, minmax(160px,1fr)); gap:14px 18px;
+    margin-bottom:6px;
+  }
+  label{display:block; font-size:12px; color:var(--ink-soft); margin-bottom:4px; font-weight:600;}
+  input[type=number], select{
+    width:100%; padding:8px 9px; border:1px solid var(--line); border-radius:2px;
+    font-family:var(--mono); font-size:14px; background:#fff; color:var(--ink);
+  }
+  input[type=number]:focus, select:focus{outline:2px solid var(--field); outline-offset:1px;}
+
+  .divider{border:none; border-top:1px dashed var(--line); margin:18px 0;}
+
+  .output-row{
+    display:flex; align-items:flex-start; gap:14px; padding:12px 0; border-top:1px solid var(--line);
+  }
+  .output-row:first-of-type{border-top:none;}
+  .badge{
+    font-family:var(--mono); font-size:11px; letter-spacing:.08em; text-transform:uppercase;
+    padding:4px 9px; border-radius:2px; white-space:nowrap; flex-shrink:0; margin-top:2px;
+  }
+  .badge.low{background:#DCE7D1; color:var(--field-deep); border:1px solid var(--field);}
+  .badge.mod{background:var(--amber-soft); color:#7A4A16; border:1px solid var(--amber);}
+  .badge.high{background:var(--brick-soft); color:var(--brick); border:1px solid var(--brick);}
+  .output-text{font-size:14.5px; color:var(--ink);}
+  .output-text b{color:var(--ink);}
+  .output-text .src{display:block; font-size:12px; color:var(--olive); margin-top:3px; font-style:italic;}
+
+  .num{font-family:var(--mono); font-weight:700;}
+
+  .recommend{
+    background:var(--paper-deep); border-left:3px solid var(--field); padding:14px 16px;
+    font-size:14.5px; margin-top:14px; border-radius:0 2px 2px 0;
+  }
+  .recommend .badge{margin-bottom:8px; display:inline-block;}
+
+  details{margin-top:6px;}
+  summary{
+    cursor:pointer; font-family:var(--mono); font-size:12.5px; color:var(--olive);
+    letter-spacing:.03em; padding:6px 0;
+  }
+  summary:hover{color:var(--field-deep);}
+  .valbox{
+    background:var(--paper-deep); border:1px solid var(--line); padding:14px 16px; margin-top:8px;
+    font-size:13px; color:var(--ink-soft); border-radius:2px;
+  }
+  .valbox table{width:100%; border-collapse:collapse; margin-top:8px; font-family:var(--mono); font-size:12.5px;}
+  .valbox td{padding:4px 6px; border-top:1px solid var(--line);}
+  .valbox td:first-child{color:var(--olive);}
+
+  .estimate-panel{
+    border-radius:5px; padding:24px 26px; margin-bottom:4px;
+    display:flex; flex-direction:column; gap:8px;
+  }
+  .estimate-panel .est-number{
+    font-family:var(--mono); font-weight:800; font-size:38px; line-height:1.05; letter-spacing:-.01em;
+  }
+  .estimate-panel .est-tier{
+    font-family:var(--mono); font-size:12px; letter-spacing:.1em; text-transform:uppercase;
+    font-weight:700; opacity:.85;
+  }
+  .estimate-panel .est-text{ font-size:15.5px; font-weight:600; line-height:1.45; }
+  .estimate-panel .est-sub{ font-size:12.5px; font-weight:500; font-style:italic; opacity:.9; }
+  .estimate-panel.low{ background:#DCE7D1; border:2px solid var(--field); color:#1B2B15; }
+  .estimate-panel.mod{ background:var(--amber-soft); border:2px solid var(--amber); color:#4A2C0B; }
+  .estimate-panel.high{ background:var(--brick-soft); border:2px solid var(--brick); color:#4A160F; }
+
+  .disclaimer{
+    border:1px solid var(--brick); background:var(--brick-soft); padding:14px 18px;
+    font-size:13px; color:#5E241C; border-radius:2px; margin-top:26px;
+  }
+  .disclaimer b{color:var(--brick);}
+
+  footer{
+    text-align:center; font-family:var(--mono); font-size:11px; color:var(--olive);
+    margin-top:30px; letter-spacing:.05em;
+  }
+
+  @media (max-width:520px){
+    header.hero{flex-direction:column; align-items:flex-start;}
+    .locale{text-align:left;}
+  }
+  .portfolio-back{background:var(--field-deep);}
+  .portfolio-back a{display:block;max-width:880px;margin:0 auto;padding:11px 24px;color:#F3F1E4;font-family:var(--sans);font-size:0.9rem;text-decoration:none;letter-spacing:0.2px;}
+  .portfolio-back a:hover,.portfolio-back a:focus-visible{text-decoration:underline;}
+</style>
+</head>
+<body>
+<nav class="portfolio-back" aria-label="Back to portfolio"><a href="index.html#projects">&larr; Back to portfolio</a></nav>
+<div class="wrap">
+
+  <header class="hero">
+    <div>
+      <span class="tag">Prototype · Partially Validated</span>
+      <h1>Fall Armyworm Risk & Scouting Aid</h1>
+      <div class="subtitle">A weekly, weather-linked companion for maize FAW monitoring in the North West Plain Zone — Built on Pantnagar data.</div>
+    </div>
+    <div class="locale">
+      G.B. Pant University of Agriculture &amp; Technology<br>
+      Pantnagar · Udham Singh Nagar · NWPZ
+    </div>
+  </header>
+
+  <div class="card" data-tab="Step 0 — Load a real week (optional)">
+    <h2>Load Historical Week</h2>
+    <div class="grid-inputs" style="align-items:end;">
+      <div>
+        <label for="histYear">Year</label>
+        <select id="histYear">
+          <option value="">— choose —</option>
+          <option value="2021">2021</option>
+          <option value="2022">2022</option>
+          <option value="2024">2024</option>
+        </select>
+      </div>
+      <div>
+        <label for="histSMW">Week (SMW)</label>
+        <select id="histSMW"><option value="">— choose year first —</option></select>
+      </div>
+      <div>
+        <button id="loadBtn" type="button" style="padding:9px 16px; font-family:var(--mono); font-size:12.5px; text-transform:uppercase; letter-spacing:.05em; background:var(--field); color:#fff; border:none; border-radius:2px; cursor:pointer;">Load this week's real data ↓</button>
+      </div>
+    </div>
+    <div style="font-size:12.5px; color:var(--olive); margin-top:6px;">Fills weather fields from real Pantnagar records (2021/2022/2024) and gives you larval predictions from that year to test the model. All fields stay editable, so hypothetical future scenarios can be checked too. A result is only shown for weeks marked <span style="color:#9C3A2E; font-weight:600;">Validated</span> in the week list below — weeks marked "Not validated" will show why no estimate is given instead.</div>
+  </div>
+
+  <div class="card" data-tab="Step 1 — Enter this week's data">
+    <h2>Weekly Inputs</h2>
+    <div class="grid-inputs">
+      <div>
+        <label for="smw">Standard Meteorological Week</label>
+        <select id="smw"></select>
+      </div>
+      <div>
+        <label for="moths">Moths/trap this week <span style="font-weight:400; color:var(--olive);">(required — confirms pest presence)</span></label>
+        <input type="number" id="moths" step="0.1" placeholder="e.g. 0, or a real trap count">
+      </div>
+      <div>
+        <label for="tmin">Minimum temperature (°C)</label>
+        <input type="number" id="tmin" step="0.1" value="25.5">
+      </div>
+      <div>
+        <label for="rhmor">Relative humidity, morning (%)</label>
+        <input type="number" id="rhmor" step="1" value="88">
+      </div>
+      <div>
+        <label for="rheve">Relative humidity, evening (%)</label>
+        <input type="number" id="rheve" step="1" value="55">
+      </div>
+      <div>
+        <label for="rf">Rainfall (mm)</label>
+        <input type="number" id="rf" step="1" value="40">
+      </div>
+      <div>
+        <label for="ss">Sunshine (hours)</label>
+        <input type="number" id="ss" step="0.1" value="4.5">
+      </div>
+      <div>
+        <label for="wv">Wind velocity (km/hr)</label>
+        <input type="number" id="wv" step="0.1" value="3.0">
+      </div>
+    </div>
+    <select id="eqyear" style="display:none;"><option value="2023">2023</option><option value="2024" selected>2024</option><option value="avg">avg</option></select>
+    <button id="calcBtn" type="button" style="margin-top:8px; padding:10px 18px; font-family:var(--mono); font-size:12.5px; text-transform:uppercase; letter-spacing:.05em; background:var(--field-deep); color:#fff; border:none; border-radius:2px; cursor:pointer;">Get Prediction ↓</button>
+  </div>
+
+  <div class="card" data-tab="Larval density estimate">
+    <div id="modelOutput"></div>
+  </div>
+
+  <div class="card" data-tab="Field guidance">
+    <h2>IPM Guidance</h2>
+    <div id="ipmOutput"></div>
+  </div>
+
+  <div class="disclaimer">
+    <b>Prototype — recommendations are decision support, not a substitute for field confirmation or local extension advice.</b>
+    Larval-density estimates come from regression fits to a small, Pantnagar-only dataset and can be wrong in any
+    given week — always confirm with an in-field scouting count before acting.
+  </div>
+
+</div>
+
+<script>
+const smwSelect = document.getElementById('smw');
+for(let w=24; w<=45; w++){
+  const opt = document.createElement('option');
+  opt.value = w;
+  opt.textContent = 'SMW ' + w;
+  if(w===33) opt.selected = true;
+  smwSelect.appendChild(opt);
+}
+
+// ---- Real historical data: Pantnagar trap catches + GBPUAT agromet weekly weather ----
+// 2021, 2022, 2024 kharif seasons. Sunshine hours (SS) not available from this bulletin
+// source, so a mid-season placeholder (4.5 hrs) is used on load — edit by hand if you have it.
+const HIST = {"2024":{"42":{"moths":0,"tmin":19.3,"tmax":31.2,"rhmor":82.0,"rheve":55.0,"rain":0.0,"windv":2.2},"41":{"moths":1.25,"tmin":20.4,"tmax":32.0,"rhmor":88.0,"rheve":50.0,"rain":0.0,"windv":1.8},"40":{"moths":2.75,"tmin":22.6,"tmax":33.0,"rhmor":88.0,"rheve":61.0,"rain":0.0,"windv":3.5},"39":{"moths":4.25,"tmin":24.5,"tmax":32.5,"rhmor":93.0,"rheve":76.0,"rain":8.8,"windv":4.5},"38":{"moths":10.0,"tmin":24.9,"tmax":31.5,"rhmor":88.0,"rheve":70.0,"rain":0.0,"windv":4.0},"37":{"moths":28.25,"tmin":24.4,"tmax":30.0,"rhmor":90.0,"rheve":76.0,"rain":273.8,"windv":2.5},"36":{"moths":18.75,"tmin":25.5,"tmax":31.8,"rhmor":89.0,"rheve":77.0,"rain":40.4,"windv":6.0},"35":{"moths":3.25,"tmin":24.9,"tmax":33.8,"rhmor":86.0,"rheve":67.0,"rain":62.0,"windv":6.1},"34":{"moths":3.0,"tmin":24.8,"tmax":31.8,"rhmor":88.0,"rheve":75.0,"rain":121.4,"windv":7.0},"33":{"moths":7.75,"tmin":26.1,"tmax":32.0,"rhmor":90.0,"rheve":76.0,"rain":46.8,"windv":7.5},"32":{"moths":14.75,"tmin":25.4,"tmax":30.1,"rhmor":93.0,"rheve":82.0,"rain":145.2,"windv":10.0},"31":{"moths":32.5,"tmin":26.1,"tmax":33.2,"rhmor":88.0,"rheve":79.0,"rain":110.0,"windv":16.0},"30":{"moths":9.75,"tmin":27.4,"tmax":34.5,"rhmor":90.0,"rheve":74.0,"rain":58.6,"windv":4.3},"29":{"moths":0,"tmin":27.5,"tmax":33.0,"rhmor":88.0,"rheve":72.0,"rain":75.4,"windv":13.0},"28":{"moths":0,"tmin":24.8,"tmax":31.5,"rhmor":84.0,"rheve":68.0,"rain":61.4,"windv":11.5},"27":{"moths":0,"tmin":24.4,"tmax":29.6,"rhmor":90.0,"rheve":84.0,"rain":331.8,"windv":10.0},"26":{"moths":0,"tmin":27.4,"tmax":35.2,"rhmor":76.0,"rheve":60.0,"rain":58.0,"windv":14.0}},"2022":{"43":{"moths":3.5,"tmin":14.9,"tmax":29.0,"rhmor":90.0,"rheve":52.0,"rain":0.0,"windv":0.2},"42":{"moths":3.9,"tmin":14.2,"tmax":30.8,"rhmor":88.0,"rheve":41.0,"rain":0.0,"windv":0.8},"41":{"moths":6.3,"tmin":18.2,"tmax":30.9,"rhmor":82.0,"rheve":52.0,"rain":0.0,"windv":2.9},"40":{"moths":5.4,"tmin":19.7,"tmax":26.5,"rhmor":92.0,"rheve":76.0,"rain":294.3,"windv":4.0},"39":{"moths":8.8,"tmin":23.6,"tmax":33.2,"rhmor":84.0,"rheve":54.0,"rain":0.0,"windv":2.0},"38":{"moths":16.8,"tmin":23.5,"tmax":30.5,"rhmor":86.0,"rheve":73.0,"rain":135.2,"windv":6.2},"37":{"moths":21.6,"tmin":24.2,"tmax":29.2,"rhmor":89.0,"rheve":82.0,"rain":214.4,"windv":3.2},"36":{"moths":9.9,"tmin":24.1,"tmax":32.3,"rhmor":86.0,"rheve":72.0,"rain":24.7,"windv":3.1},"35":{"moths":6.4,"tmin":24.6,"tmax":32.8,"rhmor":87.0,"rheve":68.0,"rain":28.2,"windv":1.8},"34":{"moths":17.1,"tmin":25.4,"tmax":33.2,"rhmor":93.0,"rheve":74.0,"rain":46.5,"windv":2.2},"33":{"moths":28.9,"tmin":25.5,"tmax":34.0,"rhmor":87.0,"rheve":70.0,"rain":57.8,"windv":3.7},"32":{"moths":16.4,"tmin":26.2,"tmax":33.5,"rhmor":80.0,"rheve":73.0,"rain":8.2,"windv":4.1},"31":{"moths":7.1,"tmin":26.5,"tmax":32.3,"rhmor":86.0,"rheve":65.0,"rain":25.8,"windv":1.7},"30":{"moths":11.8,"tmin":25.6,"tmax":31.2,"rhmor":92.0,"rheve":66.0,"rain":54.6,"windv":2.1},"29":{"moths":24.6,"tmin":26.6,"tmax":31.2,"rhmor":80.0,"rheve":75.0,"rain":15.8,"windv":6.4},"28":{"moths":26.3,"tmin":27.4,"tmax":32.3,"rhmor":77.0,"rheve":66.0,"rain":40.0,"windv":5.5},"27":{"moths":14.5,"tmin":26.7,"tmax":32.5,"rhmor":86.0,"rheve":69.0,"rain":92.8,"windv":2.6},"26":{"moths":0,"tmin":27.2,"tmax":32.5,"rhmor":80.0,"rheve":65.0,"rain":20.6,"windv":6.4}},"2021":{"44":{"moths":0.8,"tmin":13.9,"tmax":30.5,"rhmor":84.0,"rheve":33.0,"rain":0.0,"windv":1.6},"43":{"moths":3.8,"tmin":16.6,"tmax":29.8,"rhmor":86.0,"rheve":46.0,"rain":0.0,"windv":2.5},"42":{"moths":8.5,"tmin":21.5,"tmax":30.1,"rhmor":84.0,"rheve":62.0,"rain":420.2,"windv":3.2},"41":{"moths":18.6,"tmin":20.9,"tmax":34.0,"rhmor":82.0,"rheve":56.0,"rain":0.0,"windv":1.2},"40":{"moths":17.3,"tmin":22.2,"tmax":32.9,"rhmor":90.0,"rheve":52.0,"rain":3.6,"windv":1.9},"39":{"moths":6.0,"tmin":24.2,"tmax":33.5,"rhmor":84.0,"rheve":60.0,"rain":2.4,"windv":2.7},"38":{"moths":9.3,"tmin":24.6,"tmax":31.2,"rhmor":89.0,"rheve":63.0,"rain":7.8,"windv":3.2},"37":{"moths":23.8,"tmin":24.4,"tmax":33.0,"rhmor":78.0,"rheve":72.0,"rain":27.2,"windv":5.2},"36":{"moths":23.1,"tmin":26.1,"tmax":34.0,"rhmor":85.0,"rheve":62.0,"rain":0.0,"windv":3.9},"35":{"moths":6.1,"tmin":24.6,"tmax":31.8,"rhmor":90.0,"rheve":75.0,"rain":114.6,"windv":4.3},"34":{"moths":5.0,"tmin":25.4,"tmax":31.5,"rhmor":92.0,"rheve":78.0,"rain":60.4,"windv":5.1},"32":{"moths":14.6,"tmin":25.8,"tmax":33.5,"rhmor":87.0,"rheve":66.0,"rain":54.4,"windv":3.0},"33":{"moths":6.6,"tmin":25.4,"tmax":33.0,"rhmor":90.0,"rheve":76.0,"rain":19.2,"windv":5.8},"31":{"moths":7.1,"tmin":26.2,"tmax":33.4,"rhmor":88.0,"rheve":68.0,"rain":19.6,"windv":6.6}}}
+;
+
+// published regression coefficients
+// larvae/plant = a*Tmin + b*RHmor + c*RHeve + d*Rf + e*SS + f*WV
+const EQ = {
+  2023: {a:0.529, b:-0.014, c:-0.090, d:-0.002, e:-0.491, f:-0.168, range:[0.28,3.08], peakSMW:33},
+  2024: {a:1.128, b:-0.175, c:-0.012, d:-0.005, e:-0.935, f:-0.421, range:[0.10,2.82], peakSMW:36}
+};
+EQ.avg = {
+  a:(EQ[2023].a+EQ[2024].a)/2, b:(EQ[2023].b+EQ[2024].b)/2, c:(EQ[2023].c+EQ[2024].c)/2,
+  d:(EQ[2023].d+EQ[2024].d)/2, e:(EQ[2023].e+EQ[2024].e)/2, f:(EQ[2023].f+EQ[2024].f)/2,
+  range:[0.10,3.08], peakSMW:'33–36'
+};
+const EARLIEST_ONSET_SMW_GLOBAL = 28;
+
+// Checks whether a given historical week would clear all three gates and produce
+// a real estimate — same logic as render(), used to label the week picker honestly.
+function isWeekValidated(w, d){
+  if(d.moths <= 0) return false;
+  if(w < EARLIEST_ONSET_SMW_GLOBAL) return false;
+  const tmin=d.tmin, rhmor=d.rhmor, rheve=d.rheve, rf=d.rain, ss=4.5, wv=d.windv;
+  function evalEq(e){ return Math.max(0, e.a*tmin+e.b*rhmor+e.c*rheve+e.d*rf+e.e*ss+e.f*wv); }
+  const est2023=evalEq(EQ[2023]), est2024=evalEq(EQ[2024]);
+  const fits2023 = est2023>=EQ[2023].range[0] && est2023<=EQ[2023].range[1];
+  const fits2024 = est2024>=EQ[2024].range[0] && est2024<=EQ[2024].range[1];
+  return fits2023 || fits2024;
+}
+
+const histYear = document.getElementById('histYear');
+const histSMW = document.getElementById('histSMW');
+histYear.addEventListener('change', () => {
+  const y = histYear.value;
+  histSMW.innerHTML = '';
+  if(!y){ histSMW.innerHTML = '<option value="">— choose year first —</option>'; return; }
+  const weeks = Object.keys(HIST[y]).map(Number).sort((a,b)=>a-b);
+  weeks.forEach(w=>{
+    const opt = document.createElement('option');
+    opt.value = w;
+    const d = HIST[y][w];
+    const validated = isWeekValidated(w, d);
+    opt.textContent = 'SMW ' + w + ' (' + d.moths + ' moths/trap) — ' + (validated ? 'Validated' : 'Not validated');
+    if(validated){ opt.style.color = '#9C3A2E'; opt.style.fontWeight = '600'; }
+    histSMW.appendChild(opt);
+  });
+});
+
+document.getElementById('loadBtn').addEventListener('click', () => {
+  const y = histYear.value, w = histSMW.value;
+  if(!y || !w){ alert('Pick a year and week first.'); return; }
+  const d = HIST[y][w];
+  document.getElementById('smw').value = w;
+  document.getElementById('moths').value = d.moths;
+  document.getElementById('tmin').value = d.tmin;
+  document.getElementById('rhmor').value = d.rhmor;
+  document.getElementById('rheve').value = d.rheve;
+  document.getElementById('rf').value = d.rain;
+  document.getElementById('ss').value = 4.5; // placeholder — not in source data
+  document.getElementById('wv').value = d.windv;
+  render();
+});
+
+
+function num(id){ return parseFloat(document.getElementById(id).value) || 0; }
+
+function render(){
+  const tmin = num('tmin'), rhmor = num('rhmor'), rheve = num('rheve'),
+        rf = num('rf'), ss = num('ss'), wv = num('wv');
+  const smw = num('smw');
+  const mothsRaw = document.getElementById('moths').value;
+  const EARLIEST_ONSET_SMW = 28; // earliest larval onset ever recorded in the departmental study (2023)
+
+  // ---- Gate 1: moth presence must be confirmed before any larval estimate is attempted ----
+  if(mothsRaw === ''){
+    document.getElementById('modelOutput').innerHTML = `
+      <div class="estimate-panel mod">
+        <span class="est-tier">Enter moths/trap first</span>
+        <span class="est-text">Enter this week's moth trap count above (or load a historical week) before a larval estimate can be produced. The model only predicts once adult presence is confirmed for that week — it does not guess whether the pest has arrived.</span>
+      </div>`;
+    document.getElementById('ipmOutput').innerHTML = `
+      <div class="recommend">
+        <span class="badge mod">Awaiting trap data</span>
+        <div class="output-text">Continue routine pheromone trap monitoring. No larval guidance can be produced until this week's trap count is entered.</div>
+      </div>`;
+    return;
+  }
+  const moths = parseFloat(mothsRaw) || 0;
+
+  if(moths <= 0){
+    document.getElementById('modelOutput').innerHTML = `
+      <div class="estimate-panel low">
+        <span class="est-tier">Not yet established</span>
+        <span class="est-text">No moths captured this week — fall armyworm has not been confirmed present yet, so no larval density is estimated. This is a monitoring signal, not a prediction of future arrival.</span>
+      </div>`;
+    document.getElementById('ipmOutput').innerHTML = `
+      <div class="recommend">
+        <span class="badge low">Signal: Not yet present</span>
+        <div class="output-text">Continue routine weekly trap monitoring only. Re-check once trap catches turn nonzero for this location.</div>
+      </div>`;
+    return;
+  }
+
+  // ---- Gate 2: hard floor — no larval estimate before the earliest onset ever recorded, even with moths present ----
+  if(smw < EARLIEST_ONSET_SMW){
+    document.getElementById('modelOutput').innerHTML = `
+      <div class="estimate-panel low">
+        <span class="est-tier">No larvae expected yet</span>
+        <span class="est-text">Moths were captured this week (${moths} moths/trap), but SMW ${smw} is earlier than SMW ${EARLIEST_ONSET_SMW} — the earliest larval onset ever recorded at this location. Larvae typically take about a week to become countable after adults first appear, so no density is estimated yet.</span>
+      </div>`;
+    document.getElementById('ipmOutput').innerHTML = `
+      <div class="recommend">
+        <span class="badge low">Signal: Adults present, larvae not yet expected</span>
+        <div class="output-text">Adult activity confirmed — begin watching for eggs, but larval counts this early would be ahead of anything ever recorded here. Re-check scouting from SMW ${EARLIEST_ONSET_SMW} onward.</div>
+      </div>`;
+    return;
+  }
+
+  // ---- Gate 3: equation matching — only apply an equation that actually fits; otherwise say so plainly ----
+  function evalEq(e){ return Math.max(0, e.a*tmin + e.b*rhmor + e.c*rheve + e.d*rf + e.e*ss + e.f*wv); }
+  const est2023 = evalEq(EQ[2023]), est2024 = evalEq(EQ[2024]);
+  const fits2023 = est2023 >= EQ[2023].range[0] && est2023 <= EQ[2023].range[1];
+  const fits2024 = est2024 >= EQ[2024].range[0] && est2024 <= EQ[2024].range[1];
+  let eqKey;
+  if(fits2023 && !fits2024) eqKey = '2023';
+  else if(fits2024 && !fits2023) eqKey = '2024';
+  else if(fits2023 && fits2024) eqKey = 'avg';
+  else eqKey = 'none';
+
+  if(eqKey === 'none'){
+    document.getElementById('modelOutput').innerHTML = `
+      <div class="estimate-panel high">
+        <span class="est-tier">Outside validated range</span>
+        <span class="est-text">This week’s weather conditions fall outside the range of conditions observed in the data used to develop the model, making its predictions unreliable for this week. More seasonal data and further model validation are required before a reliable estimate can be provided. Rather than extrapolating beyond the model’s validated range, the estimate is flagged as unavailable until sufficient data support a reliable prediction.</span>
+      </div>`;
+    document.getElementById('ipmOutput').innerHTML = `
+      <div class="recommend">
+        <span class="badge high">Signal: Cannot estimate reliably</span>
+        <div class="output-text">Moths are present (${moths}/trap) and the crop is past the earliest onset window, so scouting is warranted regardless — walk the field and confirm larval presence directly rather than relying on a model estimate this week.</div>
+      </div>`;
+    return;
+  }
+
+  document.getElementById('eqyear').value = eqKey;
+  const eq = EQ[eqKey];
+
+  // ---- Larval density estimate ----
+  let est = eq.a*tmin + eq.b*rhmor + eq.c*rheve + eq.d*rf + eq.e*ss + eq.f*wv;
+  est = Math.max(0, est);
+  const [lo,hi] = eq.range;
+  let band, bandClass;
+  if(est < lo*0.6){ band='below the typical seasonal range'; bandClass='low'; }
+  else if(est <= hi*0.75){ band='within the typical seasonal range'; bandClass='mod'; }
+  else { band='at or approaching peak levels typically seen ('+hi.toFixed(2)+' larvae/plant, around SMW '+eq.peakSMW+')'; bandClass='high'; }
+
+  const tierWord = {low:'Low', mod:'Moderate', high:'High'};
+  document.getElementById('modelOutput').innerHTML = `
+    <div class="estimate-panel ${bandClass}">
+      <span class="est-tier">Signal: ${tierWord[bandClass]}</span>
+      <span class="est-number">${est.toFixed(2)} larvae/plant</span>
+      <span class="est-text">Estimated larval density is ${band} for Pantnagar maize this week.</span>
+      <span class="est-sub">observed seasonal range ${lo.toFixed(2)}–${hi.toFixed(2)} larvae/plant</span>
+    </div>`;
+
+  // ---------------------------------------------------------------------
+  // IPM RECOMMENDATION REPOSITORY  (internal reference only — not shown
+  // in the UI; the report/report-prototype carries the full citations)
+  //
+  // Thresholds below are anchored to two India-specific, same-metric
+  // sources rather than any foreign proxy:
+  //  - Kunwar & Maurya (2025), Indian Journal of Ecology 52(6): 1690-1696
+  //    — the source population-dynamics study for this exact site
+  //    (GBPUAT Pantnagar, kharif 2023/2024). Confirms local larval peaks
+  //    of ~2.8-3.1 larvae/plant coincided with 75-80% plant damage in
+  //    both seasons, and that late-whorl carried the heaviest damage of
+  //    the season at this location.
+  //  - Rajashekhar et al. (2024), Scientific Reports — India (Telangana)
+  //    field-validated ETL of ~1-2 larvae/whorl for whorl-stage maize,
+  //    plus seedling-stage action level of >5% plants cut.
+  // Seedling / post-whorl stages fall back to the model's own relative
+  // seasonal banding, since no India larvae/plant EIL exists for those
+  // windows yet — flagged as a gap to close with more field seasons.
+  // ---------------------------------------------------------------------
+  const IPM_LIBRARY = {
+    seedling: {
+      label: 'Pre-whorl / seedling-establishment stage',
+      metricNote: 'Larvae/plant is not the standard action metric this early — track the share of seedlings cut or showing "deadheart" instead.',
+      low: `Signal is low for this pre-whorl window. Continue routine weekly walks. Action at this stage is
+        normally triggered once <b>more than 5% of plants are cut</b>, not by a larval count — keep an eye on
+        emergence and stand loss rather than the larvae/plant figure alone.`,
+      mod: `Signal is building ahead of the whorl stage. Start standardized stand counts (e.g. 20 plants at 5
+        locations) now, so you have a cutting/deadheart percentage on record before the crop reaches whorl
+        stage, where the larvae/plant thresholds below start to apply. No insecticide action is indicated from
+        larval density alone yet.`,
+      high: `Signal is elevated even before the whorl stage — worth an early check. Walk the field now for
+        seedling cutting or deadheart symptoms; action is generally recommended once <b>more than 5% of plants
+        are cut</b>. Intervention at this stage (seed treatment / in-furrow options, where already planned) is
+        usually more effective than a rescue treatment later at whorl stage.`
+    },
+    earlyWhorl: {
+      label: 'Early-whorl vegetative stage',
+      metricNote: 'Field-recommended action range for whorl-stage maize is about 1–2 larvae/plant.',
+      low: `Estimated density is below the general whorl-stage action range of roughly <b>1–2 larvae/plant</b>.
+        Continue weekly scouting; no control action is indicated.`,
+      mod: `Estimated density has entered the ~1–2 larvae/plant range generally used as the action threshold for
+        whorl-stage maize. Increase scouting to twice weekly — 10–20 plants at multiple locations, focused on
+        whorls rather than open leaves — and confirm live larvae before deciding on control.`,
+      high: `Estimated density is at or above the <b>~2 larvae/plant</b> action level for whorl-stage maize, and
+        is approaching the range (roughly 2.8–3.1 larvae/plant) that has coincided with 75%+ plant damage in
+        past seasons at this location. Confirm with an in-field whorl count, then time any control to early
+        instars specifically — later instars burrow deeper into the whorl and are both harder to reach and
+        more damaging.`
+    },
+    lateWhorl: {
+      label: 'Late-whorl vegetative stage',
+      metricNote: 'Same ~1–2 larvae/plant action range applies, but local seasonal records link this specific stage to the season\'s most acute damage.',
+      low: `Estimated density is below the ~1–2 larvae/plant action range. Continue routine monitoring — but
+        note that late-whorl has historically been the highest-damage window at this location, so don't relax
+        scouting frequency even at a low reading.`,
+      mod: `Estimated density has entered the ~1–2 larvae/plant action range. This stage carries added urgency:
+        past seasons at this location show late-whorl as the point where whorls fill with larger, more
+        destructive larvae and the heaviest tissue loss of the season occurs. Scout twice weekly and confirm
+        live larvae before deciding on control.`,
+      high: `Estimated density is at or above the <b>~2 larvae/plant</b> action level, in the growth window that
+        has historically produced the season's worst damage at this location — larval counts in the roughly
+        2.8–3.1 larvae/plant range have coincided with 75–80% of plants damaged in past seasons here. Treat
+        this as a priority for confirmation and control: check instar stage and act quickly, since later
+        instars in a mature whorl are both harder to reach and more destructive.`
+    },
+    postWhorl: {
+      label: 'Tasseling / reproductive stage',
+      metricNote: 'Larvae relocate toward the ear at this stage, so whorl larvae/plant counts become a weaker signal than ear/shank damage checks.',
+      low: `Signal is low, and by this stage larvae/plant counts are a weaker predictor anyway since surviving
+        larvae tend to relocate toward the ear. Shift scouting emphasis to ear-tip and shank checks rather than
+        whorls.`,
+      mod: `Signal is moderate. At this stage the more informative measure is the share of plants with ear or
+        shank damage and small larvae present — commonly used action level is around <b>25% of plants</b> —
+        rather than a whorl larvae/plant count. Begin ear-check scouting alongside whorl checks.`,
+      high: `Signal is high. Once larvae have moved into the ear, insecticides are generally far less effective,
+        so timing matters more than intensity of control now. Check ear tips and shanks on a stand sample; if a
+        substantial share of plants show fresh feeding damage with live larvae present, consult your KVK or
+        extension entomologist on remaining options, recognising the window for whorl-targeted control has
+        likely passed for those plants.`
+    }
+  };
+
+  // ---- Determine growth-stage window from SMW ----
+  let stageId;
+  if(smw <= 30) stageId = 'seedling';
+  else if(smw <= 34) stageId = 'earlyWhorl';
+  else if(smw <= 38) stageId = 'lateWhorl';
+  else stageId = 'postWhorl';
+  const stage = IPM_LIBRARY[stageId];
+
+  // ---- Determine risk tier ----
+  // earlyWhorl / lateWhorl use the India-sourced ~1–2 larvae/plant action
+  // range (Rajashekhar et al. 2024) as absolute cutoffs. seedling / postWhorl
+  // fall back to the model's own relative seasonal banding, since no India
+  // larvae/plant EIL has been located for those windows yet.
+  let tier;
+  if(stageId === 'earlyWhorl' || stageId === 'lateWhorl'){
+    if(est < 1.0) tier = 'low';
+    else if(est < 2.0) tier = 'mod';
+    else tier = 'high';
+  } else {
+    tier = bandClass;
+  }
+
+  const tierLabel = {low:'Low', mod:'Moderate', high:'High'}[tier];
+  const guidance = stage[tier];
+
+  document.getElementById('ipmOutput').innerHTML = `
+    <div class="recommend">
+      <span class="badge ${tier}">Signal: ${tierLabel} — ${stage.label}</span>
+      <div class="output-text">
+        ${guidance}
+        <span class="src">${stage.metricNote}</span>
+      </div>
+    </div>`;
+}
+
+document.getElementById('calcBtn').addEventListener('click', render);
+['tmin','rhmor','rheve','rf','ss','wv','smw','moths'].forEach(id=>{
+  document.getElementById(id).addEventListener('change', render);
+});
+render();
+</script>
+</body>
+</html>

@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Project Gallery — Devyani Ramola</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #FBFAF8; --surface: #FFFFFF; --text: #2B2B33; --muted: #6B6B7B;
+      --accent: #E6E0F8; --accent-2: #FADADD; --accent-5: #D9ECFA;
+      --card-shadow: 0 8px 32px rgba(43,43,51,0.08);
+      --card-hover: 0 16px 48px rgba(43,43,51,0.12);
+      --radius: 24px; --radius-sm: 16px;
+    }
+    [data-theme="dark"] {
+      --bg: #1A1A22; --surface: #252530; --text: #F0F0F5; --muted: #A0A0B0;
+      --accent: rgba(230,224,248,0.15); --accent-2: rgba(250,218,221,0.15);
+      --accent-5: rgba(217,236,250,0.15);
+      --card-shadow: 0 8px 32px rgba(0,0,0,0.3);
+      --card-hover: 0 16px 48px rgba(0,0,0,0.4);
+    }
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.7;min-height:100dvh;transition:background 0.3s,color 0.3s}
+    h1{font-family:'Playfair Display',serif;font-weight:600;line-height:1.2}
+    a{color:inherit;text-decoration:none}
+    img{display:block;max-width:100%}
+    button{font:inherit}
+    [hidden]{display:none!important}
+    :focus-visible{outline:3px solid var(--accent-5);outline-offset:3px;border-radius:4px}
+    .skip-link{position:absolute;top:-48px;left:16px;background:var(--text);color:var(--bg);padding:8px 16px;z-index:1100}
+    .skip-link:focus{top:8px}
+    nav{position:fixed;top:0;left:0;right:0;z-index:100;min-height:80px;padding:16px 5vw;display:flex;justify-content:space-between;align-items:center;gap:16px;background:rgba(251,250,248,0.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
+    [data-theme="dark"] nav{background:rgba(26,26,34,0.92)}
+    .nav-logo{font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:700}
+    .nav-actions{display:flex;align-items:center;gap:20px}
+    .back-link{font-size:0.9rem;font-weight:500;color:var(--muted);min-height:44px;display:inline-flex;align-items:center;transition:color 0.2s}
+    .back-link:hover{color:var(--text)}
+    .theme-toggle{width:48px;height:26px;border-radius:13px;border:2px solid var(--muted);background:transparent;cursor:pointer;position:relative;display:flex;align-items:center;padding:0 3px}
+    .theme-toggle::after{content:'';width:18px;height:18px;border-radius:50%;background:var(--text);transition:transform 0.2s}
+    [data-theme="dark"] .theme-toggle::after{transform:translateX(22px)}
+    main{max-width:1200px;margin:0 auto;padding:132px 5vw 80px}
+    .album-header{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;margin-bottom:36px}
+    .album-header h1{font-size:clamp(2.4rem,6vw,4.5rem);margin-bottom:12px}
+    .album-description{color:var(--muted);max-width:680px;font-size:1rem;line-height:1.75}
+    .photo-count{flex-shrink:0;color:var(--muted);font-size:0.9rem;background:var(--accent);padding:6px 14px;border-radius:20px}
+    .photo-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
+    .photo-button{position:relative;display:block;width:100%;padding:0;border:0;border-radius:var(--radius-sm);overflow:hidden;background:var(--accent);box-shadow:var(--card-shadow);cursor:pointer;transition:transform 0.2s,box-shadow 0.2s}
+    .photo-button:hover{transform:translateY(-4px);box-shadow:var(--card-hover)}
+    .photo-button img{width:100%;aspect-ratio:4/3;object-fit:cover;transition:transform 0.25s}
+    .photo-button:hover img{transform:scale(1.04)}
+    .photo-button::after{content:'+';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) scale(0);width:48px;height:48px;background:rgba(251,250,248,0.92);color:#2B2B33;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.6rem;transition:transform 0.2s}
+    .photo-button:hover::after,.photo-button:focus-visible::after{transform:translate(-50%,-50%) scale(1)}
+    .album-error{max-width:640px;margin:60px auto;padding:32px;background:var(--surface);border-radius:var(--radius-sm);box-shadow:var(--card-shadow);text-align:center}
+    .album-error h2{font-family:'Playfair Display',serif;font-size:2rem;margin-bottom:12px}
+    .album-error p{color:var(--muted);margin-bottom:20px}
+    .error-link{display:inline-flex;align-items:center;min-height:44px;padding:8px 18px;border-radius:22px;background:var(--accent);font-weight:500}
+    footer{padding:32px 5vw;text-align:center;color:var(--muted);font-size:0.85rem;border-top:1px solid var(--accent)}
+    .lightbox{position:fixed;inset:0;z-index:1000;background:rgba(16,16,20,0.96);display:flex;align-items:center;justify-content:center;padding:64px 84px;color:#F0F0F5}
+    .lightbox figure{max-width:100%;max-height:100%;display:flex;flex-direction:column;align-items:center;gap:12px}
+    .lightbox img{max-width:100%;max-height:78dvh;width:auto;height:auto;object-fit:contain;border-radius:12px;box-shadow:0 20px 60px rgba(0,0,0,0.45)}
+    .lightbox-caption{max-width:760px;text-align:center;font-size:0.9rem;color:#D8D8E0;line-height:1.5}
+    .lightbox-counter{font-size:0.8rem;color:#B8B8C4}
+    .lightbox-btn{position:absolute;display:flex;align-items:center;justify-content:center;width:48px;height:48px;border:0;border-radius:50%;background:rgba(240,240,245,0.14);color:#F0F0F5;font-size:2rem;cursor:pointer;transition:background 0.2s,transform 0.2s}
+    .lightbox-btn:hover{background:rgba(240,240,245,0.26);transform:scale(1.05)}
+    .lightbox-close{top:20px;right:24px}
+    .lightbox-prev{left:24px;top:50%;margin-top:-24px}
+    .lightbox-next{right:24px;top:50%;margin-top:-24px}
+    @media(max-width:900px){.photo-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.album-header{align-items:flex-start;flex-direction:column;gap:16px}.lightbox{padding:64px 20px 84px}.lightbox-prev{left:16px;top:auto;bottom:18px;margin:0}.lightbox-next{right:16px;top:auto;bottom:18px;margin:0}}
+    @media(max-width:520px){nav{min-height:72px;padding:12px 5vw}main{padding-top:108px}.photo-grid{gap:12px}.album-header{margin-bottom:24px}.album-description{font-size:0.95rem}.back-link{font-size:0.85rem}.lightbox-close{right:16px}.lightbox img{max-height:72dvh}}
+    @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition-duration:0.01ms!important}}
+  </style>
+</head>
+<body>
+  <a href="#main" class="skip-link">Skip to photographs</a>
+  <nav aria-label="Gallery navigation">
+    <a class="nav-logo" href="index.html" aria-label="Devyani Ramola portfolio home">DR.</a>
+    <div class="nav-actions">
+      <a class="back-link" href="index.html#gallery">← All galleries</a>
+      <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle dark mode"></button>
+    </div>
+  </nav>
+
+  <main id="main">
+    <div id="albumContent">
+      <header class="album-header">
+        <div>
+          <h1 id="albumTitle"></h1>
+          <p class="album-description" id="albumDescription"></p>
+        </div>
+        <span class="photo-count" id="photoCount"></span>
+      </header>
+      <div class="photo-grid" id="photoGrid" aria-live="polite"></div>
+    </div>
+    <div class="album-error" id="albumError" hidden>
+      <h2>Gallery not found</h2>
+      <p>This project gallery does not exist or may have been moved.</p>
+      <a class="error-link" href="index.html#gallery">Return to all galleries</a>
+    </div>
+    <noscript><p class="album-error">JavaScript is required to display this project gallery.</p></noscript>
+  </main>
+
+  <footer>Devyani Ramola — Project photographs</footer>
+
+  <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-labelledby="lightboxCaption" hidden>
+    <button class="lightbox-btn lightbox-close" id="closeButton" type="button" aria-label="Close full-size photo">×</button>
+    <button class="lightbox-btn lightbox-prev" id="prevButton" type="button" aria-label="Previous photo">‹</button>
+    <figure>
+      <img id="lightboxImage" src="" alt="">
+      <figcaption class="lightbox-caption" id="lightboxCaption"></figcaption>
+      <span class="lightbox-counter" id="lightboxCounter"></span>
+    </figure>
+    <button class="lightbox-btn lightbox-next" id="nextButton" type="button" aria-label="Next photo">›</button>
+  </div>
+
+  <script>
+    const albums = {
+      biotech: {
+        title: 'Bio-tech',
+        description: 'Laboratory research, microbial screening, and bioprocessing during my biotechnology training at Clover Organic Pvt. Ltd.',
+        photos: [
+          { thumb: 'assets/gallery/biotech/thumb-01.jpg', full: 'assets/gallery/biotech/full-01.jpg', alt: 'Pipetting culture into a Petri dish under aseptic conditions' },
+          { thumb: 'assets/gallery/biotech/thumb-02.jpg', full: 'assets/gallery/biotech/full-02.jpg', alt: 'Microbial culture work in a laminar air flow cabinet' },
+          { thumb: 'assets/gallery/biotech/thumb-03.jpg', full: 'assets/gallery/biotech/full-03.jpg', alt: 'Aseptic laboratory work at a laminar air flow workstation' },
+          { thumb: 'assets/gallery/biotech/thumb-04.jpg', full: 'assets/gallery/biotech/full-04.jpg', alt: 'Microscopic examination of a prepared laboratory sample' },
+          { thumb: 'assets/gallery/biotech/thumb-05.jpg', full: 'assets/gallery/biotech/full-05.jpg', alt: 'Automated bottle filling and packaging line' },
+          { thumb: 'assets/gallery/biotech/thumb-06.jpg', full: 'assets/gallery/biotech/full-06.jpg', alt: 'Stainless steel microbial fermentation vessel' },
+          { thumb: 'assets/gallery/biotech/thumb-07.jpg', full: 'assets/gallery/biotech/full-07.jpg', alt: 'Bioprocessing and fermentation equipment at Clover Organic' }
+        ]
+      },
+      pcp: {
+        title: 'PCP',
+        description: 'Field moments from the Practical Crop Production Programme: year-round rice and wheat cultivation, crop protection, harvesting and post-harvest handling.',
+        photos: [
+          { thumb: 'assets/gallery/pcp/thumb-01.jpg', full: 'assets/gallery/pcp/full-01.jpg', alt: 'Team members working in a flooded rice paddy at dusk' },
+          { thumb: 'assets/gallery/pcp/thumb-02.jpg', full: 'assets/gallery/pcp/full-02.jpg', alt: 'Standing at the edge of a flooded rice paddy' },
+          { thumb: 'assets/gallery/pcp/thumb-03.jpg', full: 'assets/gallery/pcp/full-03.jpg', alt: 'Spraying the rice crop in the field' },
+          { thumb: 'assets/gallery/pcp/thumb-04.jpg', full: 'assets/gallery/pcp/full-04.jpg', alt: 'Crop spraying along a rice field bund under a cloudy sky' },
+          { thumb: 'assets/gallery/pcp/thumb-05.jpg', full: 'assets/gallery/pcp/full-05.jpg', alt: 'Combine harvester unloading harvested grain into a trolley' },
+          { thumb: 'assets/gallery/pcp/thumb-06.jpg', full: 'assets/gallery/pcp/full-06.jpg', alt: 'Team seated on freshly harvested grain in a trolley' },
+          { thumb: 'assets/gallery/pcp/thumb-07.jpg', full: 'assets/gallery/pcp/full-07.jpg', alt: 'Cleaning and bagging harvested grain on the threshing floor' },
+          { thumb: 'assets/gallery/pcp/thumb-08.jpg', full: 'assets/gallery/pcp/full-08.jpg', alt: 'Team with bagged grain after a late work session' }
+        ]
+      },
+      hive: {
+        title: 'Hive to Harvest',
+        description: 'Field visits, farmer interactions and apiary work from Hive to Harvest, an apiculture startup connecting beekeepers with equipment, markets, training and support.',
+        photos: [
+          { thumb: 'assets/gallery/hive/thumb-01.jpg', full: 'assets/gallery/hive/full-01.jpg', alt: 'Group photo in front of a beekeeping products banner' },
+          { thumb: 'assets/gallery/hive/thumb-02.jpg', full: 'assets/gallery/hive/full-02.jpg', alt: 'Interacting with a woman farmer and taking notes on the veranda' },
+          { thumb: 'assets/gallery/hive/thumb-03.jpg', full: 'assets/gallery/hive/full-03.jpg', alt: 'With women beekeepers under a tree' },
+          { thumb: 'assets/gallery/hive/thumb-04.jpg', full: 'assets/gallery/hive/full-04.jpg', alt: 'Team members at a hive box in a garden apiary' },
+          { thumb: 'assets/gallery/hive/thumb-05.jpg', full: 'assets/gallery/hive/full-05.jpg', alt: 'Visiting an apiary with hive boxes under tin roofs' },
+          { thumb: 'assets/gallery/hive/thumb-06.jpg', full: 'assets/gallery/hive/full-06.jpg', alt: 'Talking with a farmer on a hillside field' },
+          { thumb: 'assets/gallery/hive/thumb-07.jpg', full: 'assets/gallery/hive/full-07.jpg', alt: 'A beekeeper showing a hive box beside his house' },
+          { thumb: 'assets/gallery/hive/thumb-08.jpg', full: 'assets/gallery/hive/full-08.jpg', alt: 'A bee hive box standing under a tree' },
+          { thumb: 'assets/gallery/hive/thumb-09.jpg', full: 'assets/gallery/hive/full-09.jpg', alt: 'A beekeeper showing a traditional wall hive and honeycomb' },
+          { thumb: 'assets/gallery/hive/thumb-10.jpg', full: 'assets/gallery/hive/full-10.jpg', alt: 'A beekeeper inspecting a hive frame full of bees' },
+          { thumb: 'assets/gallery/hive/thumb-11.jpg', full: 'assets/gallery/hive/full-11.jpg', alt: 'A beekeeper carrying a hive box with bees in the air' },
+          { thumb: 'assets/gallery/hive/thumb-12.jpg', full: 'assets/gallery/hive/full-12.jpg', alt: 'WhatsApp group for beekeepers with 55 members' },
+          { thumb: 'assets/gallery/hive/thumb-13.jpg', full: 'assets/gallery/hive/full-13.jpg', alt: 'Hive to Harvest beekeepers WhatsApp group with 212 members' },
+          { thumb: 'assets/gallery/hive/thumb-14.jpg', full: 'assets/gallery/hive/full-14.jpg', alt: 'A beekeeper holding a honeycomb frame beside a honey extraction setup' },
+          { thumb: 'assets/gallery/hive/thumb-15.jpg', full: 'assets/gallery/hive/full-15.jpg', alt: 'Inspecting a hive box in an apiary under trees' },
+          { thumb: 'assets/gallery/hive/thumb-16.jpg', full: 'assets/gallery/hive/full-16.jpg', alt: 'Two beekeepers examining a frame of bees and honeycomb' },
+          { thumb: 'assets/gallery/hive/thumb-17.jpg', full: 'assets/gallery/hive/full-17.jpg', alt: 'A beekeeper showing a frame full of bees in his apiary' },
+          { thumb: 'assets/gallery/hive/thumb-18.jpg', full: 'assets/gallery/hive/full-18.jpg', alt: 'A beekeeper working at a hive box among rows of hives' },
+          { thumb: 'assets/gallery/hive/thumb-19.jpg', full: 'assets/gallery/hive/full-19.jpg', alt: 'A beekeeper explaining hive management to women farmers in bee veils' },
+          { thumb: 'assets/gallery/hive/thumb-20.jpg', full: 'assets/gallery/hive/full-20.jpg', alt: 'Hive boxes arranged in a tree-shaded apiary' },
+          { thumb: 'assets/gallery/hive/thumb-21.jpg', full: 'assets/gallery/hive/full-21.jpg', alt: 'A beekeeper opening a hive box in the field' },
+          { thumb: 'assets/gallery/hive/thumb-22.jpg', full: 'assets/gallery/hive/full-22.jpg', alt: 'Beekeepers examining a frame during a field session' },
+          { thumb: 'assets/gallery/hive/thumb-23.jpg', full: 'assets/gallery/hive/full-23.jpg', alt: 'Women beekeepers handling a hive frame during a field demonstration' },
+          { thumb: 'assets/gallery/hive/thumb-24.jpg', full: 'assets/gallery/hive/full-24.jpg', alt: 'Poster for presenting the Hive to Harvest startup pitch in a national-level startup competition' }
+        ]
+      },
+      inamigos: {
+        title: 'InAmigos Foundation',
+        description: 'Campaign and awareness posts from InAmigos Foundation, where I volunteered in 2025.',
+        photos: [
+          { thumb: 'assets/gallery/inamigos/thumb-01.jpg', full: 'assets/gallery/inamigos/full-01.jpg', alt: 'Project Seva post: Serve, Educate, Empower — The InAmigos Way' },
+          { thumb: 'assets/gallery/inamigos/thumb-02.jpg', full: 'assets/gallery/inamigos/full-02.jpg', alt: 'Project Seva awareness post with a collage of InAmigos activities' },
+          { thumb: 'assets/gallery/inamigos/thumb-03.jpg', full: 'assets/gallery/inamigos/full-03.jpg', alt: 'Project Bachpanshala fundraising post' },
+          { thumb: 'assets/gallery/inamigos/thumb-04.jpg', full: 'assets/gallery/inamigos/full-04.jpg', alt: 'Project Seva post: every small act of kindness counts' },
+          { thumb: 'assets/gallery/inamigos/thumb-05.jpg', full: 'assets/gallery/inamigos/full-05.jpg', alt: 'Project Seva post on reaching streets and slums with food, clothes and care' },
+          { thumb: 'assets/gallery/inamigos/thumb-06.jpg', full: 'assets/gallery/inamigos/full-06.jpg', alt: 'CSR partnership post: why partner with InAmigos Foundation' },
+          { thumb: 'assets/gallery/inamigos/thumb-07.jpg', full: 'assets/gallery/inamigos/full-07.jpg', alt: 'Donation appeal post: your small contribution can bring a big change' },
+          { thumb: 'assets/gallery/inamigos/thumb-08.jpg', full: 'assets/gallery/inamigos/full-08.jpg', alt: 'Donation drive post' },
+          { thumb: 'assets/gallery/inamigos/thumb-09.jpg', full: 'assets/gallery/inamigos/full-09.jpg', alt: 'Donate today post with donation QR code' },
+          { thumb: 'assets/gallery/inamigos/thumb-10.jpg', full: 'assets/gallery/inamigos/full-10.jpg', alt: 'Post supporting the Bachpanshala, Seva, Prakriti and Jeeva initiatives' }
+        ]
+      },
+      dsttec: {
+        title: 'DST-TEC',
+        description: 'Moments from my 2024 internship at the DST Technology Enabling Centre, Pantnagar.',
+        photos: [
+          { thumb: 'assets/gallery/dsttec/thumb-01.jpg', full: 'assets/gallery/dsttec/full-01.jpg', alt: 'Beside the “Innovations Throughout the Centuries” wall display compiled and designed during the internship' },
+          { thumb: 'assets/gallery/dsttec/thumb-02.jpg', full: 'assets/gallery/dsttec/full-02.jpg', alt: 'Receiving a certificate at DST Technology Enabling Centre' },
+          { thumb: 'assets/gallery/dsttec/thumb-03.jpg', full: 'assets/gallery/dsttec/full-03.jpg', alt: 'In front of the “Major Innovations of the 21st Century (So Far)” wall display' },
+          { thumb: 'assets/gallery/dsttec/thumb-04.jpg', full: 'assets/gallery/dsttec/full-04.jpg', alt: 'With DST-TEC staff in front of the startup information wall displays' },
+          { thumb: 'assets/gallery/dsttec/thumb-05.jpg', full: 'assets/gallery/dsttec/full-05.jpg', alt: 'Group photo in front of the display wall at DST-TEC' }
+        ]
+      }
+    };
+
+    let currentAlbum = null;
+    let currentIndex = 0;
+    let previousFocus = null;
+    let touchStartX = 0;
+
+    const photoGrid = document.getElementById('photoGrid');
+    const lightbox = document.getElementById('lightbox');
+    const lightboxImage = document.getElementById('lightboxImage');
+    const lightboxCaption = document.getElementById('lightboxCaption');
+    const lightboxCounter = document.getElementById('lightboxCounter');
+    const closeButton = document.getElementById('closeButton');
+    const prevButton = document.getElementById('prevButton');
+    const nextButton = document.getElementById('nextButton');
+
+    function renderAlbum() {
+      const project = new URLSearchParams(window.location.search).get('project') || 'biotech';
+      const album = albums[project];
+      if (!album) {
+        document.getElementById('albumContent').hidden = true;
+        document.getElementById('albumError').hidden = false;
+        document.title = 'Gallery not found — Devyani Ramola';
+        return;
+      }
+      currentAlbum = album;
+      document.title = album.title + ' Gallery — Devyani Ramola';
+      document.getElementById('albumTitle').textContent = album.title;
+      document.getElementById('albumDescription').textContent = album.description;
+      document.getElementById('photoCount').textContent = album.photos.length + ' photographs';
+      const fragment = document.createDocumentFragment();
+      album.photos.forEach(function(photo, index) {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'photo-button';
+        button.setAttribute('aria-label', 'View full-size photo ' + (index + 1) + ': ' + photo.alt);
+        const image = document.createElement('img');
+        image.loading = 'lazy';
+        image.decoding = 'async';
+        image.src = photo.thumb;
+        image.alt = photo.alt;
+        image.loading = 'lazy';
+        image.decoding = 'async';
+        button.appendChild(image);
+        button.addEventListener('click', function() { openLightbox(index); });
+        fragment.appendChild(button);
+      });
+      photoGrid.appendChild(fragment);
+    }
+
+    function updateLightbox() {
+      const photo = currentAlbum.photos[currentIndex];
+      lightboxImage.src = photo.full;
+      lightboxImage.alt = photo.alt;
+      lightboxCaption.textContent = photo.alt;
+      lightboxCounter.textContent = (currentIndex + 1) + ' / ' + currentAlbum.photos.length;
+      const multiple = currentAlbum.photos.length > 1;
+      prevButton.hidden = !multiple;
+      nextButton.hidden = !multiple;
+    }
+
+    function openLightbox(index) {
+      currentIndex = index;
+      previousFocus = document.activeElement;
+      updateLightbox();
+      lightbox.hidden = false;
+      document.body.style.overflow = 'hidden';
+      closeButton.focus();
+    }
+
+    function closeLightbox() {
+      lightbox.hidden = true;
+      document.body.style.overflow = '';
+      lightboxImage.src = '';
+      if (previousFocus) previousFocus.focus();
+    }
+
+    function changeImage(direction) {
+      currentIndex = (currentIndex + direction + currentAlbum.photos.length) % currentAlbum.photos.length;
+      updateLightbox();
+    }
+
+    closeButton.addEventListener('click', closeLightbox);
+    prevButton.addEventListener('click', function() { changeImage(-1); });
+    nextButton.addEventListener('click', function() { changeImage(1); });
+    lightbox.addEventListener('click', function(event) {
+      if (event.target === lightbox) closeLightbox();
+    });
+    lightboxImage.addEventListener('touchstart', function(event) {
+      touchStartX = event.changedTouches[0].clientX;
+    }, { passive: true });
+    lightboxImage.addEventListener('touchend', function(event) {
+      const distance = event.changedTouches[0].clientX - touchStartX;
+      if (Math.abs(distance) > 50) changeImage(distance < 0 ? 1 : -1);
+    }, { passive: true });
+    document.addEventListener('keydown', function(event) {
+      if (lightbox.hidden) return;
+      if (event.key === 'Escape') closeLightbox();
+      if (event.key === 'ArrowLeft') changeImage(-1);
+      if (event.key === 'ArrowRight') changeImage(1);
+      if (event.key === 'Tab') {
+        const controls = [closeButton, prevButton, nextButton].filter(function(button) { return !button.hidden; });
+        const first = controls[0];
+        const last = controls[controls.length - 1];
+        if (event.shiftKey && document.activeElement === first) {
+          event.preventDefault();
+          last.focus();
+        } else if (!event.shiftKey && document.activeElement === last) {
+          event.preventDefault();
+          first.focus();
+        }
+      }
+    });
+
+    function applySavedTheme() {
+      let saved = null;
+      try { saved = localStorage.getItem('theme'); } catch (error) {}
+      if (saved) document.documentElement.setAttribute('data-theme', saved);
+      else if (window.matchMedia('(prefers-color-scheme: dark)').matches) document.documentElement.setAttribute('data-theme', 'dark');
+    }
+    document.getElementById('themeToggle').addEventListener('click', function() {
+      const next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      try { localStorage.setItem('theme', next); } catch (error) {}
+    });
+
+    applySavedTheme();
+    renderAlbum();
+  </script>
+</body>
+</html>
