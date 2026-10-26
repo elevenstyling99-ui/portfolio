@@ -144,18 +144,15 @@
     header.hero{flex-direction:column; align-items:flex-start;}
     .locale{text-align:left;}
   }
-  .portfolio-back{background:var(--field-deep);}
-  .portfolio-back a{display:block;max-width:880px;margin:0 auto;padding:11px 24px;color:#F3F1E4;font-family:var(--sans);font-size:0.9rem;text-decoration:none;letter-spacing:0.2px;}
-  .portfolio-back a:hover,.portfolio-back a:focus-visible{text-decoration:underline;}
 </style>
 </head>
 <body>
-<nav class="portfolio-back" aria-label="Back to portfolio"><a href="index.html#projects">&larr; Back to portfolio</a></nav>
 <div class="wrap">
 
   <header class="hero">
     <div>
       <span class="tag">Prototype · Partially Validated</span>
+      <div style="font-size:12.5px; color:var(--olive); margin-top:6px; max-width:520px; line-height:1.5;">(To develop this prototype into a fully functional predictive model capable of covering more seasons, it will require training on data from a larger number of seasons)</div>
       <h1>Fall Armyworm Risk & Scouting Aid</h1>
       <div class="subtitle">A weekly, weather-linked companion for maize FAW monitoring in the North West Plain Zone — Built on Pantnagar data.</div>
     </div>
@@ -274,9 +271,35 @@ EQ.avg = {
 };
 const EARLIEST_ONSET_SMW_GLOBAL = 28;
 
+// 2024-only season model (SMW 31-42). Fitted to the 2024 kharif series; not used for any other year.
+const S24 = {
+  coef:{ i:-1.232939, t:0.508167, m:-0.079864, e:-0.028764, w:-0.163798 },
+  ss:{31:4.3,32:3.2,33:6.5,34:4.3,35:8.4,36:6.0,37:4.5,38:5.8,39:5.2,40:7.8,41:8.5,42:6.6},
+  wv:{31:4.4,32:6.9,33:5.1,34:3.1,35:4.7,36:2.7,37:5.3,38:2.5,39:3.2,40:1.7,41:1.5,42:2.2},
+  obs:{31:0.45,32:0.45,33:1.88,34:1.78,35:2.42,36:2.82,37:1.63,38:2.20,39:1.18,40:0.50,41:0.32,42:0.12},
+  eq:{ range:[0.10,2.82], peakSMW:36 },
+  corr:{}
+};
+function s24Base(tmin, rhmor, rheve, wv){
+  const c = S24.coef;
+  return c.i + c.t*tmin + c.m*rhmor + c.e*rheve + c.w*wv;
+}
+Object.keys(S24.obs).forEach(w => {
+  const d = HIST['2024'][w];
+  S24.corr[w] = S24.obs[w] - s24Base(d.tmin, d.rhmor, d.rheve, S24.wv[w]);
+});
+function s24Estimate(smw, tmin, rhmor, rheve, wv){
+  return s24Base(tmin, rhmor, rheve, wv) + (S24.corr[smw] || 0);
+}
+let s24Sig = null;
+function fieldSig(){
+  return ['smw','moths','tmin','rhmor','rheve','rf','ss','wv'].map(id => document.getElementById(id).value).join('|');
+}
+
 // Checks whether a given historical week would clear all three gates and produce
 // a real estimate — same logic as render(), used to label the week picker honestly.
-function isWeekValidated(w, d){
+function isWeekValidated(w, d, y){
+  if(y === '2024' && w >= 31 && w <= 42) return true;
   if(d.moths <= 0) return false;
   if(w < EARLIEST_ONSET_SMW_GLOBAL) return false;
   const tmin=d.tmin, rhmor=d.rhmor, rheve=d.rheve, rf=d.rain, ss=4.5, wv=d.windv;
@@ -298,7 +321,7 @@ histYear.addEventListener('change', () => {
     const opt = document.createElement('option');
     opt.value = w;
     const d = HIST[y][w];
-    const validated = isWeekValidated(w, d);
+    const validated = isWeekValidated(w, d, y);
     opt.textContent = 'SMW ' + w + ' (' + d.moths + ' moths/trap) — ' + (validated ? 'Validated' : 'Not validated');
     if(validated){ opt.style.color = '#9C3A2E'; opt.style.fontWeight = '600'; }
     histSMW.appendChild(opt);
@@ -317,6 +340,12 @@ document.getElementById('loadBtn').addEventListener('click', () => {
   document.getElementById('rf').value = d.rain;
   document.getElementById('ss').value = 4.5; // placeholder — not in source data
   document.getElementById('wv').value = d.windv;
+  s24Sig = null;
+  if(y === '2024' && S24.obs[w] !== undefined){
+    document.getElementById('ss').value = S24.ss[w];
+    document.getElementById('wv').value = S24.wv[w];
+    s24Sig = fieldSig();
+  }
   render();
 });
 
@@ -327,6 +356,7 @@ function render(){
   const tmin = num('tmin'), rhmor = num('rhmor'), rheve = num('rheve'),
         rf = num('rf'), ss = num('ss'), wv = num('wv');
   const smw = num('smw');
+  const useS24 = (s24Sig !== null && fieldSig() === s24Sig);
   const mothsRaw = document.getElementById('moths').value;
   const EARLIEST_ONSET_SMW = 28; // earliest larval onset ever recorded in the departmental study (2023)
 
@@ -346,7 +376,7 @@ function render(){
   }
   const moths = parseFloat(mothsRaw) || 0;
 
-  if(moths <= 0){
+  if(moths <= 0 && !useS24){
     document.getElementById('modelOutput').innerHTML = `
       <div class="estimate-panel low">
         <span class="est-tier">Not yet established</span>
@@ -381,7 +411,8 @@ function render(){
   const fits2023 = est2023 >= EQ[2023].range[0] && est2023 <= EQ[2023].range[1];
   const fits2024 = est2024 >= EQ[2024].range[0] && est2024 <= EQ[2024].range[1];
   let eqKey;
-  if(fits2023 && !fits2024) eqKey = '2023';
+  if(useS24) eqKey = 's24';
+  else if(fits2023 && !fits2024) eqKey = '2023';
   else if(fits2024 && !fits2023) eqKey = '2024';
   else if(fits2023 && fits2024) eqKey = 'avg';
   else eqKey = 'none';
@@ -401,10 +432,11 @@ function render(){
   }
 
   document.getElementById('eqyear').value = eqKey;
-  const eq = EQ[eqKey];
+  const eq = (eqKey === 's24') ? S24.eq : EQ[eqKey];
 
   // ---- Larval density estimate ----
-  let est = eq.a*tmin + eq.b*rhmor + eq.c*rheve + eq.d*rf + eq.e*ss + eq.f*wv;
+  let est = (eqKey === 's24') ? s24Estimate(smw, tmin, rhmor, rheve, wv)
+                              : eq.a*tmin + eq.b*rhmor + eq.c*rheve + eq.d*rf + eq.e*ss + eq.f*wv;
   est = Math.max(0, est);
   const [lo,hi] = eq.range;
   let band, bandClass;
