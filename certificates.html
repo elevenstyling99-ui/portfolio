@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Certificates — Devyani Ramola</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root{--bg:#FBFAF8;--surface:#FFFFFF;--text:#2B2B33;--muted:#6B6B7B;--accent:#E6E0F8;--accent-2:#FADADD;--accent-5:#D9ECFA;--card-shadow:0 8px 32px rgba(43,43,51,0.08);--card-hover:0 16px 48px rgba(43,43,51,0.12);--radius-sm:16px}
+    [data-theme="dark"]{--bg:#1A1A22;--surface:#252530;--text:#F0F0F5;--muted:#A0A0B0;--accent:rgba(230,224,248,0.15);--accent-2:rgba(250,218,221,0.15);--accent-5:rgba(217,236,250,0.15);--card-shadow:0 8px 32px rgba(0,0,0,0.3);--card-hover:0 16px 48px rgba(0,0,0,0.4)}
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.7;overflow-x:hidden}
+    h1,h2{font-family:'Playfair Display',serif;font-weight:600;line-height:1.25}
+    a{color:inherit;text-decoration:none}
+    img{max-width:100%;display:block}
+    nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:16px 5vw;display:flex;justify-content:space-between;align-items:center;background:rgba(251,250,248,0.85);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
+    [data-theme="dark"] nav{background:rgba(26,26,34,0.85)}
+    .nav-logo{font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:700}
+    .back-link{font-size:0.9rem;font-weight:500;color:var(--muted);min-height:44px;display:inline-flex;align-items:center;transition:color .2s}
+    .back-link:hover{color:var(--text)}
+    main{max-width:1200px;margin:0 auto;padding:120px 5vw 80px}
+    .page-head{text-align:center;margin-bottom:56px}
+    .page-head h1{font-size:clamp(1.8rem,4vw,2.6rem);margin-bottom:12px}
+    .page-head p{color:var(--muted);max-width:560px;margin:0 auto}
+    .cert-list{display:flex;flex-direction:column;gap:40px}
+    .cert-row{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:0;background:var(--surface);border-radius:var(--radius-sm);box-shadow:var(--card-shadow);overflow:hidden;scroll-margin-top:100px}
+    .cert-view{display:flex;align-items:center;justify-content:center;background:var(--accent-5);padding:20px;min-height:260px}
+    .cert-view img{width:100%;max-height:560px;object-fit:contain;border-radius:6px;box-shadow:0 4px 18px rgba(0,0,0,0.12);background:#fff}
+    .cert-info{padding:36px 36px;display:flex;flex-direction:column;justify-content:center;border-left:4px solid var(--accent-2)}
+    .c-icon{font-size:1.6rem;margin-bottom:10px}
+    .cert-info h2{font-size:1.35rem;margin-bottom:10px}
+    .c-issuer{font-size:0.92rem;color:var(--muted);margin-bottom:4px}
+    .c-date{font-size:0.85rem;color:var(--muted);margin-bottom:14px}
+    .c-desc{font-size:0.95rem;color:var(--muted);line-height:1.7;margin-bottom:10px}
+    .c-btn{align-self:flex-start;margin-top:10px;font-size:0.9rem;font-weight:500;padding:10px 20px;border-radius:999px;background:var(--accent);min-height:44px;display:inline-flex;align-items:center;transition:transform .2s}
+    .c-btn:hover{transform:translateY(-2px)}
+    :focus-visible{outline:3px solid var(--accent-5);outline-offset:3px;border-radius:4px}
+    @media(max-width:820px){.cert-row{grid-template-columns:1fr}.cert-info{border-left:0;border-top:4px solid var(--accent-2);padding:26px 22px}.cert-view{padding:14px}main{padding-top:100px}}
+  </style>
+</head>
+<body>
+  <nav aria-label="Certificates navigation">
+    <a class="nav-logo" href="index.html">Devyani Ramola</a>
+    <a class="back-link" href="index.html">← Back to portfolio</a>
+  </nav>
+  <main id="main">
+    <header class="page-head">
+      <h1>Certificates</h1>
+      <p>Certificates and awards from courses, programmes and competitions. Click a picture to open it in full.</p>
+    </header>
+    <section class="cert-list" aria-label="Certificates">
+    <article class="cert-row" id="certificate-cabi-crop-pest-diagnosis">
+      <a class="cert-view" href="crop-pest-diagnosis-foundation-certificate.pdf" target="_blank" rel="noopener noreferrer" aria-label="Open certificate: Crop Pest Diagnosis Fundamentals: Foundation Level">
+        <img src="assets/certificates/crop-pest-diagnosis-foundation.jpg" alt="Certificate: Crop Pest Diagnosis Fundamentals: Foundation Level" loading="lazy">
+      </a>
+      <div class="cert-info">
+        <div class="c-icon" aria-hidden="true">🔬</div>
+        <h2>Crop Pest Diagnosis Fundamentals: Foundation Level</h2>
+        <p class="c-issuer">CABI Academy (Centre for Agriculture and Bioscience International)</p>
+        <p class="c-date">Completed: 10/05/2026</p>
+        <p class="c-desc">Mode of learning: Online</p>
+        <a class="c-btn" href="crop-pest-diagnosis-foundation-certificate.pdf" target="_blank" rel="noopener noreferrer">Open PDF →</a>
+      </div>
+    </article>
+    <article class="cert-row" id="certificate-colead-pra-intermediate">
+      <a class="cert-view" href="pest-risk-analysis-intermediate-certificate.pdf" target="_blank" rel="noopener noreferrer" aria-label="Open certificate: Pest Risk Analysis (Intermediate level)">
+        <img src="assets/certificates/pest-risk-analysis-intermediate.jpg" alt="Certificate: Pest Risk Analysis (Intermediate level)" loading="lazy">
+      </a>
+      <div class="cert-info">
+        <div class="c-icon" aria-hidden="true">🛡️</div>
+        <h2>Pest Risk Analysis (Intermediate level)</h2>
+        <p class="c-issuer">COLEAD</p>
+        <p class="c-date">Issued: 13/05/2026</p>
+        <p class="c-desc">Mode of learning: Online</p>
+        <a class="c-btn" href="pest-risk-analysis-intermediate-certificate.pdf" target="_blank" rel="noopener noreferrer">Open PDF →</a>
+      </div>
+    </article>
+    <article class="cert-row" id="certificate-colead-pra-advanced">
+      <a class="cert-view" href="pest-risk-analysis-advanced-certificate.pdf" target="_blank" rel="noopener noreferrer" aria-label="Open certificate: Pest Risk Analysis (Advanced level)">
+        <img src="assets/certificates/pest-risk-analysis-advanced.jpg" alt="Certificate: Pest Risk Analysis (Advanced level)" loading="lazy">
+      </a>
+      <div class="cert-info">
+        <div class="c-icon" aria-hidden="true">🛡️</div>
+        <h2>Pest Risk Analysis (Advanced level)</h2>
+        <p class="c-issuer">COLEAD</p>
+        <p class="c-date">Issued: 14/05/2026</p>
+        <p class="c-desc">Mode of learning: Online</p>
+        <a class="c-btn" href="pest-risk-analysis-advanced-certificate.pdf" target="_blank" rel="noopener noreferrer">Open PDF →</a>
+      </div>
+    </article>
+    <article class="cert-row" id="certificate-german-a2">
+      <a class="cert-view" href="german-a2-certificate.pdf" target="_blank" rel="noopener noreferrer" aria-label="Open certificate: German A2 — Basiskurs Deutsch (Nicos Weg)">
+        <img src="assets/certificates/german-a2.jpg" alt="Certificate: German A2 — Basiskurs Deutsch (Nicos Weg)" loading="lazy">
+      </a>
+      <div class="cert-info">
+        <div class="c-icon" aria-hidden="true">🇩🇪</div>
+        <h2>German A2 — Basiskurs Deutsch (Nicos Weg)</h2>
+        <p class="c-issuer">DW Akademie, Deutsche Welle · Bonn</p>
+        <p class="c-date">Issued: 24/10/2026</p>
+        <p class="c-desc">Successfully passed the final test of the online German course “Nicos Weg – Einfach Deutsch lernen (A2)”, answering 112 of 122 questions correctly.</p>
+        <a class="c-btn" href="german-a2-certificate.pdf" target="_blank" rel="noopener noreferrer">Open PDF →</a>
+      </div>
+    </article>
+    <article class="cert-row" id="certificate-hive-to-harvest">
+      <a class="cert-view" href="hive-to-harvest-certificate.pdf" target="_blank" rel="noopener noreferrer" aria-label="Open certificate: Hive to Harvest — 3-Months Virtual Incubation Programme">
+        <img src="assets/certificates/hive-to-harvest.jpg" alt="Certificate: Hive to Harvest — 3-Months Virtual Incubation Programme" loading="lazy">
+      </a>
+      <div class="cert-info">
+        <div class="c-icon" aria-hidden="true">🐝</div>
+        <h2>Hive to Harvest — 3-Months Virtual Incubation Programme</h2>
+        <p class="c-issuer">DST Technology Enabling Centre<br>G. B. Pant University of Agriculture &amp; Technology, Pantnagar</p>
+        <p class="c-date">Programme period: 01/06/2025 – 31/08/2025</p>
+        <p class="c-desc">Certificate of Completion for contributing to the development and implementation of the Hive to Harvest Project under the 3-Months Virtual Incubation Programme of DST Technology Enabling Centre, Pantnagar.</p>
+        <a class="c-btn" href="hive-to-harvest-certificate.pdf" target="_blank" rel="noopener noreferrer">Open PDF →</a>
+      </div>
+    </article>
+    <article class="cert-row" id="certificate-dst-tec-internship">
+      <a class="cert-view" href="dst-tec-internship-certificate.pdf" target="_blank" rel="noopener noreferrer" aria-label="Open certificate: Certificate of Internship — DST Technology Enabling Centre">
+        <img src="assets/certificates/dst-tec-internship.jpg" alt="Certificate: Certificate of Internship — DST Technology Enabling Centre" loading="lazy">
+      </a>
+      <div class="cert-info">
+        <div class="c-icon" aria-hidden="true">💡</div>
+        <h2>Certificate of Internship — DST Technology Enabling Centre</h2>
+        <p class="c-issuer">DST Technology Enabling Centre, G. B. Pant University of Agriculture &amp; Technology, Pantnagar</p>
+        <p class="c-date">25/04/2024 – 14/05/2024</p>
+        <p class="c-desc">Completed the 20-day TEC Internship on Data Mining and Content Development and Editing.</p>
+        <a class="c-btn" href="dst-tec-internship-certificate.pdf" target="_blank" rel="noopener noreferrer">Open PDF →</a>
+      </div>
+    </article>
+    <article class="cert-row" id="certificate-agrivision-2026">
+      <a class="cert-view" href="agrivision-2026-presentation-certificate.pdf" target="_blank" rel="noopener noreferrer" aria-label="Open certificate: Poster Presentation — 8th International Conference on Sustainable Agriculture for Food Security (Agri Vision 2026)">
+        <img src="assets/certificates/agrivision-2026-presentation.jpg" alt="Certificate: Poster Presentation — 8th International Conference on Sustainable Agriculture for Food Security (Agri Vision 2026)" loading="lazy">
+      </a>
+      <div class="cert-info">
+        <div class="c-icon" aria-hidden="true">🎤</div>
+        <h2>Poster Presentation — 8th International Conference on Sustainable Agriculture for Food Security (Agri Vision 2026)</h2>
+        <p class="c-issuer">Society for Agricultural Research &amp; Management (SARM) and ICAR-Indian Institute of Horticultural Research, Bengaluru</p>
+        <p class="c-date">28/01/2026 – 30/01/2026 · ICAR-IIHR-CHES, Bhubaneswar, Odisha</p>
+        <p class="c-desc">Presented a poster titled “Millets for nutrition and climate action: An integrative review of agronomy, processing, and nutritional outcomes”.</p>
+        <a class="c-btn" href="agrivision-2026-presentation-certificate.pdf" target="_blank" rel="noopener noreferrer">Open PDF →</a>
+      </div>
+    </article>
+    <article class="cert-row" id="certificate-g20-university-connect">
+      <a class="cert-view" href="g20-university-connect-certificate.pdf" target="_blank" rel="noopener noreferrer" aria-label="Open certificate: Certificate of Participation — G20 University Connect Programme: Engaging Young Minds">
+        <img src="assets/certificates/g20-university-connect.jpg" alt="Certificate: Certificate of Participation — G20 University Connect Programme: Engaging Young Minds" loading="lazy">
+      </a>
+      <div class="cert-info">
+        <div class="c-icon" aria-hidden="true">🌍</div>
+        <h2>Certificate of Participation — G20 University Connect Programme: Engaging Young Minds</h2>
+        <p class="c-issuer">G. B. Pant University of Agriculture &amp; Technology, Pantnagar</p>
+        <p class="c-date">27/08/2023</p>
+        <p class="c-desc">Participated under the theme “Innovating Agricultural Education Landscape: Technology, Entrepreneurship, Sustainability”.</p>
+        <a class="c-btn" href="g20-university-connect-certificate.pdf" target="_blank" rel="noopener noreferrer">Open PDF →</a>
+      </div>
+    </article>
+    <article class="cert-row" id="certificate-inamigos-volunteer">
+      <a class="cert-view" href="inamigos-volunteer-certificate.pdf" target="_blank" rel="noopener noreferrer" aria-label="Open certificate: Certificate of Volunteer — InAmigos Foundation">
+        <img src="assets/certificates/inamigos-volunteer.jpg" alt="Certificate: Certificate of Volunteer — InAmigos Foundation" loading="lazy">
+      </a>
+      <div class="cert-info">
+        <div class="c-icon" aria-hidden="true">🤝</div>
+        <h2>Certificate of Volunteer — InAmigos Foundation</h2>
+        <p class="c-issuer">InAmigos Foundation</p>
+        <p class="c-date">Volunteer tenure: 11/06/2025 – 25/08/2025 · Issued 04/09/2025</p>
+        <p class="c-desc">Acknowledges the successful completion of a volunteer tenure at InAmigos Foundation.</p>
+        <a class="c-btn" href="inamigos-volunteer-certificate.pdf" target="_blank" rel="noopener noreferrer">Open PDF →</a>
+      </div>
+    </article>
+    <article class="cert-row" id="certificate-sanskritik-chetna-parishad">
+      <a class="cert-view" href="sanskritik-chetna-parishad-certificate.pdf" target="_blank" rel="noopener noreferrer" aria-label="Open certificate: Executive Member — SCP Society">
+        <img src="assets/certificates/sanskritik-chetna-parishad.jpg" alt="Certificate: Executive Member — SCP Society" loading="lazy">
+      </a>
+      <div class="cert-info">
+        <div class="c-icon" aria-hidden="true">🎭</div>
+        <h2>Executive Member — SCP Society</h2>
+        <p class="c-issuer">Sanskritik Chetna Parishad, G. B. Pant University of Agriculture &amp; Technology, Pantnagar</p>
+        <p class="c-date">Session 2024–25</p>
+        
+        <a class="c-btn" href="sanskritik-chetna-parishad-certificate.pdf" target="_blank" rel="noopener noreferrer">Open PDF →</a>
+      </div>
+    </article>
+    <article class="cert-row" id="trophy-scp-executive-member">
+      <a class="cert-view" href="assets/certificates/scp-executive-member-trophy.jpg" target="_blank" rel="noopener noreferrer" aria-label="Open certificate: Executive Member — SCP Society">
+        <img src="assets/certificates/scp-executive-member-trophy.jpg" alt="Certificate: Executive Member — SCP Society" loading="lazy">
+      </a>
+      <div class="cert-info">
+        <div class="c-icon" aria-hidden="true">🏆</div>
+        <h2>Executive Member — SCP Society</h2>
+        <p class="c-issuer">Sanskritik Chetna Parishad, G. B. Pant University of Agriculture &amp; Technology, Pantnagar</p>
+        <p class="c-date">Session 2024–25</p>
+        
+        <a class="c-btn" href="assets/certificates/scp-executive-member-trophy.jpg" target="_blank" rel="noopener noreferrer">Open full size →</a>
+      </div>
+    </article>
+    <article class="cert-row" id="certificate-insignia-paper-presentation">
+      <a class="cert-view" href="insignia-2025-paper-presentation-certificate.pdf" target="_blank" rel="noopener noreferrer" aria-label="Open certificate: 1st Position — Paper Presentation, Insignia 2025">
+        <img src="assets/certificates/insignia-2025-paper-presentation.jpg" alt="Certificate: 1st Position — Paper Presentation, Insignia 2025" loading="lazy">
+      </a>
+      <div class="cert-info">
+        <div class="c-icon" aria-hidden="true">🏆</div>
+        <h2>1st Position — Paper Presentation, Insignia 2025</h2>
+        <p class="c-issuer">Agriculture Society, College of Agriculture, G. B. Pant University of Agriculture &amp; Technology, Pantnagar</p>
+        <p class="c-date">16/05/2025</p>
+        <p class="c-desc">Presented a paper on the sub-theme “Budget 2025 – An Uplifting Stroke for Agriculture” at Insignia 2025.</p>
+        <a class="c-btn" href="insignia-2025-paper-presentation-certificate.pdf" target="_blank" rel="noopener noreferrer">Open PDF →</a>
+      </div>
+    </article>
+    <article class="cert-row" id="certificate-insignia-short-film">
+      <a class="cert-view" href="insignia-2025-short-film-certificate.pdf" target="_blank" rel="noopener noreferrer" aria-label="Open certificate: 1st Position — Short Film Competition, Insignia 2025">
+        <img src="assets/certificates/insignia-2025-short-film.jpg" alt="Certificate: 1st Position — Short Film Competition, Insignia 2025" loading="lazy">
+      </a>
+      <div class="cert-info">
+        <div class="c-icon" aria-hidden="true">🎬</div>
+        <h2>1st Position — Short Film Competition, Insignia 2025</h2>
+        <p class="c-issuer">Agriculture Society, College of Agriculture, G. B. Pant University of Agriculture &amp; Technology, Pantnagar</p>
+        <p class="c-date">17/05/2025</p>
+        <p class="c-desc">Awarded for the short film “Hidden Hunger in India: The Unseen Face of Malnutrition”.</p>
+        <a class="c-btn" href="insignia-2025-short-film-certificate.pdf" target="_blank" rel="noopener noreferrer">Open PDF →</a>
+      </div>
+    </article>
+    <article class="cert-row" id="certificate-insignia-student-parliament">
+      <a class="cert-view" href="insignia-2025-student-parliament-certificate.pdf" target="_blank" rel="noopener noreferrer" aria-label="Open certificate: 1st Runner-up — Student Parliament, Insignia 2025">
+        <img src="assets/certificates/insignia-2025-student-parliament.jpg" alt="Certificate: 1st Runner-up — Student Parliament, Insignia 2025" loading="lazy">
+      </a>
+      <div class="cert-info">
+        <div class="c-icon" aria-hidden="true">🏛️</div>
+        <h2>1st Runner-up — Student Parliament, Insignia 2025</h2>
+        <p class="c-issuer">Agriculture Society, College of Agriculture, G. B. Pant University of Agriculture &amp; Technology, Pantnagar</p>
+        <p class="c-date">19/05/2025</p>
+        <p class="c-desc">Theme: Climate Change and India’s Development Priorities.</p>
+        <a class="c-btn" href="insignia-2025-student-parliament-certificate.pdf" target="_blank" rel="noopener noreferrer">Open PDF →</a>
+      </div>
+    </article>
+    <article class="cert-row" id="certificate-general-agriculture-quiz-48">
+      <a class="cert-view" href="general-agriculture-quiz-48-certificate.pdf" target="_blank" rel="noopener noreferrer" aria-label="Open certificate: 1st Position — General Agriculture Quiz-48">
+        <img src="assets/certificates/general-agriculture-quiz-48.jpg" alt="Certificate: 1st Position — General Agriculture Quiz-48" loading="lazy">
+      </a>
+      <div class="cert-info">
+        <div class="c-icon" aria-hidden="true">🧠</div>
+        <h2>1st Position — General Agriculture Quiz-48</h2>
+        <p class="c-issuer">Agriculture Society, College of Agriculture, G. B. Pant University of Agriculture &amp; Technology, Pantnagar</p>
+        
+        <p class="c-desc">Awarded in recognition of outstanding performance.</p>
+        <a class="c-btn" href="general-agriculture-quiz-48-certificate.pdf" target="_blank" rel="noopener noreferrer">Open PDF →</a>
+      </div>
+    </article>
+    <article class="cert-row" id="trophy-volleyball-tournament">
+      <a class="cert-view" href="assets/certificates/volleyball-tournament.jpg" target="_blank" rel="noopener noreferrer" aria-label="Open certificate: Volleyball Tournament">
+        <img src="assets/certificates/volleyball-tournament.jpg" alt="Certificate: Volleyball Tournament" loading="lazy">
+      </a>
+      <div class="cert-info">
+        <div class="c-icon" aria-hidden="true">🏐</div>
+        <h2>Volleyball Tournament</h2>
+        <p class="c-issuer">Gandhi Utsav 2025 · G. B. Pant University of Agriculture &amp; Technology, Pantnagar</p>
+        
+        
+        <a class="c-btn" href="assets/certificates/volleyball-tournament.jpg" target="_blank" rel="noopener noreferrer">Open full size →</a>
+      </div>
+    </article>
+    <article class="cert-row" id="medals-sports-championships">
+      <a class="cert-view" href="assets/certificates/sports-championships.jpg" target="_blank" rel="noopener noreferrer" aria-label="Open certificate: Sports Championships">
+        <img src="assets/certificates/sports-championships.jpg" alt="Certificate: Sports Championships" loading="lazy">
+      </a>
+      <div class="cert-info">
+        <div class="c-icon" aria-hidden="true">🏅</div>
+        <h2>Sports Championships</h2>
+        <p class="c-issuer">Gandhi Bhawan · 2024, 2025 and 2026</p>
+        
+        <p class="c-desc">Including chess, badminton and table tennis (TT).</p>
+        <a class="c-btn" href="assets/certificates/sports-championships.jpg" target="_blank" rel="noopener noreferrer">Open full size →</a>
+      </div>
+    </article>
+    </section>
+  </main>
+  <script>
+    try{
+      var s=localStorage.getItem('theme');
+      if(s) document.documentElement.setAttribute('data-theme',s);
+      else if(window.matchMedia('(prefers-color-scheme: dark)').matches) document.documentElement.setAttribute('data-theme','dark');
+    }catch(e){}
+  </script>
+</body>
+</html>
